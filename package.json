@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "db:sync": "node ./src/database/syncDatabase.js",
-    "start": "node ./src/server.js"
+    "start": "node ./src/server.js",
+    "dev": "node --watch ./src/server.js"
   },
   "author": "Marcus",
   "license": "ISC",
