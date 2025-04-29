@@ -10,6 +10,8 @@ const productsController = {
 
     // GET /api/products/:id
     show: async(req, res) => {
+        // Não está sendo a validação de maneira proposital. 
+        // Para mais informações, acesse o README do proejto no campo 'Objetivo e avisos'.
         const product = await Products.findById(req.params.id)
         if(!product) res.status(404).json({message: 'Produto não encontrado.'})
         res.json(product)
