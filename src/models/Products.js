@@ -70,7 +70,7 @@ class Products{
 
     static async deleteById(id)
     {
-        query(`DELETE FROM products WHERE id = $1`, [id])
+        await query(`DELETE FROM products WHERE id = $1`, [id])
         return { message: `Product deleted sucessfully.` }
     }
 }
