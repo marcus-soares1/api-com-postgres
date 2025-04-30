@@ -19,6 +19,7 @@ async function syncDatabase(){
         )
       `);
     console.log('Created "products" table.');
+    console.log('Created "customers" table.');
     process.exit(1);
 }
 
