@@ -70,12 +70,62 @@ describe('Products model', ()=>{
             VALUES($1, $2, $3, $4, $5)
             RETURNING *`,[mockRow.name, mockRow.description, mockRow.price, mockRow.stockQuantity, mockRow.isActive])
             expect(result).toBeInstanceOf(Products)
-            expect(result).toBeInstanceOf(Products)
             expect(result.name).toBe(mockRow.name)
             expect(result.description).toBe(mockRow.description)
             expect(result.price).toBe(mockRow.price)
             expect(result.stockQuantity).toBe(mockRow.stock_quantity)
             expect(result.isActive).toBe(mockRow.is_active)            
+        })
+    })
+
+    describe('update', ()=>{
+        it('should update a product', async ()=>{
+            const mockRow = { id: 1, name: 'Produto 1', description: 'Descrição 1', price: 100, stock_quantity: 10, is_active: true,  created_at: new Date('2023-01-01'), updated_at: new Date('2023-01-01') }
+            const updatedInfo = { id: 1, name: 'Updated product', description: 'Updated description'}
+            const updatedRow = {
+                id: 1,
+                name: updatedInfo.name || mockRow.name,
+                description: updatedInfo.description || mockRow.description,
+                price: updatedInfo.price || mockRow.price,
+                stock_quantity: updatedInfo.stock_quantity || mockRow.stock_quantity,
+                is_active: updatedInfo.isActive || mockRow.is_active,
+                created_at: updatedInfo.created_at || mockRow.created_at,
+                updated_at: updatedInfo.updated_at || mockRow.updated_at,
+            }
+
+            query.mockResolvedValueOnce({rows: [mockRow]})
+            query.mockResolvedValueOnce({rows: [updatedRow]})
+
+            const result = await Products.update(updatedInfo.id, updatedInfo)
+
+
+            expect(query).toHaveBeenNthCalledWith(1, `SELECT * FROM products WHERE id = $1`, [updatedInfo.id])
+
+            expect(result).toBeInstanceOf(Products)
+            expect(result.name).toBe(updatedRow.name)
+            expect(result.description).toBe(updatedRow.description)
+            expect(result.price).toBe(updatedRow.price)
+            expect(result.stockQuantity).toBe(updatedRow.stock_quantity)
+            expect(result.isActive).toBe(updatedRow.is_active)
+            expect(result.createdAt).toEqual(updatedRow.created_at)
+            expect(result.updatedAt).toEqual(updatedRow.updated_at)
+            
+        })
+    })
+
+    describe('deleteById', ()=>{
+        it('should delete a prodct by id', async ()=>{
+
+            const productId = 1
+            const expectedMessage = { message: `Product deleted sucessfully.` }
+            query.mockResolvedValue({})
+            
+            const result = await Products.deleteById(productId)
+
+            expect(result).toStrictEqual(expectedMessage)
+
+            expect(query).toHaveBeenCalledWith(`DELETE FROM products WHERE id = $1`, [productId])
+            expect(result).toEqual(expectedMessage)
         })
     })
 
