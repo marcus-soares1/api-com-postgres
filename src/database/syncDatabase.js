@@ -12,6 +12,11 @@ async function syncDatabase(){
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           is_active BOOLEAN DEFAULT TRUE
         );
+        CREATE TABLE IF NOT EXISTS customers (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL
+        )
       `);
     console.log('Created "products" table.');
     process.exit(1);
