@@ -53,7 +53,8 @@ class Products{
                 stock_quantity = $4,
                 is_active = $5,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $6;`,
+            WHERE id = $6
+            RETURNING *`,
             [
                 product.name,
                 product.description,
@@ -64,12 +65,12 @@ class Products{
             ]
         )
 
-        return product
+        return new Products(result.rows[0])
     }
 
     static async deleteById(id)
     {
-        query(`DELETE FROM products WHERE id = $1`, [id])
+        await query(`DELETE FROM products WHERE id = $1`, [id])
         return { message: `Product deleted sucessfully.` }
     }
 }
