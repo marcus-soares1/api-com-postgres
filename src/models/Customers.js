@@ -11,7 +11,7 @@ class Customers{
     {
         const result = await query(`SELECT * FROM customers;`)
 
-        return result.rows.mao((row)=> new Customers(row))
+        return result.rows.map((row)=> new Customers(row))
     }
 
     static async findById(id)
