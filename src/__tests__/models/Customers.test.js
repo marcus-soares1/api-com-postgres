@@ -71,7 +71,19 @@ describe('Customers model', ()=>{
 
     describe('update', ()=>{
         it('should update a customer', async()=>{
-            
+            const mockOriginalRow = { id: 1, name: 'John', email: 'john@mail.com'}
+            const updatedInfo = { mail: 'john@email.com' }
+            const updatedRow = { id: 1, name: 'John', email: 'john@email.com'}
+
+            query.mockResolvedValueOnce({rows: [mockOriginalRow]})
+
+            const result = await Customers.update(mockOriginalRow.id, updatedInfo)
+
+            expect(query).toHaveBeenCalledWith(`SELECT * FROM customers WHERE id = $1`, [mockOriginalRow.id])
+            expect(result).toBeInstanceOf(Customers)
+            expect(result.id).toBe(updatedRow.id)
+            expect(result.name).toBe(updatedRow.name)
+            expect(result.email).toBe(updatedRow.email)
         })
     })
 })
