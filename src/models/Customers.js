@@ -1,3 +1,5 @@
+const { query } = require("../database/index")
+
 class Customers{
     constructor(customerRow)
     {
@@ -37,3 +39,5 @@ class Customers{
 
     }
 }
+
+module.exports = Customers
