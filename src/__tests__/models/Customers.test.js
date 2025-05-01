@@ -4,6 +4,7 @@ jest.mock('../../database/index', ()=>({
 
 const { query } = require("../../database/index")
 const Customers = require("../../models/Customers")
+const Products = require("../../models/Products")
 
 describe('Customers model', ()=>{
     beforeEach(()=>{
@@ -84,6 +85,21 @@ describe('Customers model', ()=>{
             expect(result.id).toBe(updatedRow.id)
             expect(result.name).toBe(updatedRow.name)
             expect(result.email).toBe(updatedRow.email)
+        })
+    })
+
+    describe('deleteById', ()=>{
+        it('should delete a customer', async ()=>{
+            const deletedId = 1
+            const expectedMessage = { message: `Product deleted sucessfully.` }
+            query.mockResolvedValue({})
+
+            const result = await Products.deleteById(deletedId)
+
+
+            expect(query).toHaveBeenCalledWith(`DELETE FROM customers WHERE id = $1`, [deletedId])
+            expect(result).toEqual(expectedMessage)
+
         })
     })
 })
