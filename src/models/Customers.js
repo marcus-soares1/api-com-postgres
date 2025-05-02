@@ -48,7 +48,7 @@ class Customers{
 
     static async deleteById(id)
     {
-        await query(`DELETE FROM products WHERE id = $1`, [id])
+        await query(`DELETE FROM customers WHERE id = $1`, [id])
         return { message: `Customer deleted sucessfully.` }
 
     }
