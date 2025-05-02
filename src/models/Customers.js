@@ -3,6 +3,7 @@ const { query } = require("../database/index")
 class Customers{
     constructor(customerRow)
     {
+        this.id = customerRow.id
         this.name = customerRow.name
         this.email = customerRow.email
     }
