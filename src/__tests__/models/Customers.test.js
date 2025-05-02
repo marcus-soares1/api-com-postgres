@@ -77,6 +77,7 @@ describe('Customers model', ()=>{
             const updatedRow = { id: 1, name: 'John', email: 'john@email.com'}
 
             query.mockResolvedValueOnce({rows: [mockOriginalRow]})
+            query.mockResolvedValueOnce({rows: [updatedRow]})
 
             const result = await Customers.update(mockOriginalRow.id, updatedInfo)
 
