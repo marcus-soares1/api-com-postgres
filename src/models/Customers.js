@@ -3,6 +3,7 @@ const { query } = require("../database/index")
 class Customers{
     constructor(customerRow)
     {
+        this.id = customerRow.id
         this.name = customerRow.name
         this.email = customerRow.email
     }
@@ -35,12 +36,15 @@ class Customers{
     {
         const { rows } = await query(`SELECT * FROM customers WHERE id = $1`, [id])
         if(!rows[0]) return null
+        const customer = new Customers(rows[0])
+
+        Object.assign(customer, {... atributtes})
         
         const result = await query(`UPDATE customers SET
                 name = $1,
                 email = $2
             WHERE id = $3
-            RETURNING *`, [atributtes.name, atributtes.email, id])
+            RETURNING *`, [customer.name, customer.email, id])
 
         return new Customers(result.rows[0])
 
