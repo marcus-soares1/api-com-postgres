@@ -15,9 +15,10 @@ O objetivo principal deste projeto foi solidificar o entendimento sobre:
 - Interação com um banco de dados relacional (PostgreSQL) utilizando queries SQL diretas.
 - Implementação das operações CRUD de forma eficiente e organizada.
 - Estrutura básica de uma API RESTful.
+- Aprender a utilizar a biblioteca jest em testes unitários, que ajudam a validar se o comportamento das funções está retornando o resultado esperado.
 
 ## Observações
-Tendo em vista que esse projeto foi criado para o estudo para um caso específico de integração de uma API com banco de dados, existem pontos não tratados propositalmente visando a agilidade no desenvolvimento, como o tratamento de erros e exceções e a arquitetura apropriada. Esses são pontos são tratados em outros projetos.
+Tendo em vista que esse projeto foi criado para o estudo para um caso específico de integração de uma API com banco de dados, e também aproveitei para aprender a utilizar a biblioteca **jest** em teste unitários, existem pontos não tratados propositalmente visando a agilidade no desenvolvimento, como o tratamento de erros e exceções e a arquitetura apropriada. Esses são pontos são tratados em outros projetos.
 
 Assim como já utilizei em outros casos de estudo, seria utilizado a biblioteca **ZOD** para ajudar na validação de dados e o uso de **middlewares de erro** para o tratamento de erros que pudessem aparecer em algum lugar da aplicação.
 
@@ -38,6 +39,7 @@ A API de Produtos oferece os seguintes endpoints:
 - **PostgreSQL**: Sistema de gerenciamento de banco de dados relacional.
 - **`pg`**: Driver PostgreSQL para Node.js, utilizado para interação com o banco de dados.
 - **dotenv**: Para gerenciamento de variáveis de ambiente.
+- **jest**: Biblioteca utilizada para testes unitários que garantem que o código funciona como deveria.
 
 ## Pré-requisitos
 
@@ -76,7 +78,12 @@ Antes de executar o projeto, certifique-se de ter instalado em sua máquina:
     npm run db:sync
     ```
 
-5.  **Inicie o servidor:**
+5. **Realize os testes unitários:**
+    ```bash
+    npm test
+    ```
+
+6.  **Inicie o servidor:**
     ```bash
     npm start
     ```
