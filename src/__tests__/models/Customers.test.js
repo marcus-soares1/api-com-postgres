@@ -20,7 +20,7 @@ describe('Customers model', ()=>{
             const result = await Customers.findAll()
 
             expect(query).toHaveBeenCalledWith(`SELECT * FROM customers;`)
-            expect(result).toHaveLenght(mockRows.length)
+            expect(result).toHaveLength(mockRows.length)
             result.forEach((customer, index) => {
                 expect(customer).toBeInstanceOf(Customers)
                 expect(customer.id).toBe(mockRows[index].id)
@@ -39,12 +39,13 @@ describe('Customers model', ()=>{
             query.mockResolvedValue({rows: [mockRows.find(row=>row.id === id)]})
 
             const result = await Customers.findById(id)
+            console.log(result)
 
             expect(query).toHaveBeenCalledWith(`SELECT * FROM customers WHERE id = $1`, [id])
             expect(result).toBeInstanceOf(Customers)
-            expect(result.id).toBe(mockRows.find(row => row.id === id).id)
-            expect(result.name).toBe(mockRows.find(row => row.id === id).name)
-            expect(result.email).toBe(mockRows.find(row => row.id === id).email)
+            expect(result.id).toBe(mockRows.find((row) => row.id === id).id)
+            expect(result.name).toBe(mockRows.find((row) => row.id === id).name)
+            expect(result.email).toBe(mockRows.find((row)=> row.id === id).email)
 
         })
     }),
@@ -55,12 +56,11 @@ describe('Customers model', ()=>{
 
             query.mockResolvedValue({rows: [mockRow]})
 
-            const result = await Customers.create(mockRow)
+            const result = await Customers.create(mockRow.name, mockRow.email)
 
             expect(query).toHaveBeenCalledWith(
                 `INSERT INTO customers (name, email)
-                VALUES (1$, 2$)
-                RETURNING *`, [mockRow.name, mockRow.email]
+            VALUES($1, $2) RETURNING *`, [mockRow.name, mockRow.email]
             )
 
             expect(result).toBeInstanceOf(Customers)
@@ -73,7 +73,7 @@ describe('Customers model', ()=>{
     describe('update', ()=>{
         it('should update a customer', async()=>{
             const mockOriginalRow = { id: 1, name: 'John', email: 'john@mail.com'}
-            const updatedInfo = { mail: 'john@email.com' }
+            const updatedInfo = { email: 'john@email.com' }
             const updatedRow = { id: 1, name: 'John', email: 'john@email.com'}
 
             query.mockResolvedValueOnce({rows: [mockOriginalRow]})
@@ -91,10 +91,10 @@ describe('Customers model', ()=>{
     describe('deleteById', ()=>{
         it('should delete a customer', async ()=>{
             const deletedId = 1
-            const expectedMessage = { message: `Product deleted sucessfully.` }
+            const expectedMessage = { message: `Customer deleted sucessfully.` }
             query.mockResolvedValue({})
 
-            const result = await Products.deleteById(deletedId)
+            const result = await Customers.deleteById(deletedId)
 
 
             expect(query).toHaveBeenCalledWith(`DELETE FROM customers WHERE id = $1`, [deletedId])
