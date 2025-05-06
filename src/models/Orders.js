@@ -1,0 +1,95 @@
+const { getClient } = require("../database")
+const Products = require("./Products")
+
+class Orders{
+    constructor(orderRow, populateCustomer, populateProducts)
+    {
+        this.id = orderRow.id
+        this.customerId = orderRow.customer_id
+        this.total = +orderRow.total
+        this.createdAt = new Date(orderRow.created_at)
+        this.updaetAt = new Date(orderRow.updaet_at)
+
+        this.customer = undefined
+        if(populateCustomer)
+        {
+            this.customer = populateCustomer
+        }
+
+        this.product = undefined
+        if(populateProducts)
+        {
+            this.product = populateProducts
+        }
+
+    }
+
+    static async findAll()
+    {
+        const result = await query(`
+            SELECT 
+                orders.*, 
+                customers.id AS customer_id,
+                customers.name AS customer.name,
+                customers.email AS customer.email,
+                customers.created_at AS customer.created_at,
+                customers.updated_at AS customer.updated_at,            
+            FROM orders JOIN customers ON customer_id = orders.customer_id
+        `)
+        return result.rows.map((row) => new Orders(row))
+    }
+
+    /**
+    * 
+    * @param {number} customerId
+    * @param {{id: nunmber, quantity: number}[]} orderProducts    
+    */
+
+    static async create(customerId, orderProducts)
+    {
+       
+        const storedOrderProducts = await query(
+            `SELECT * FROM orders WHERE id = ANY($1::int[]);`,
+            [orderProducts.map(product => product.id)]
+        )
+
+        let orderTotal = 0
+        const populatedOrderProducts = storedOrderProducts.rows.map((row)=>{
+            const { quantity } = orderProducts.find( (product) => product.id === row.id )
+            orderTotal += +row.price * quantity
+            return { product: new Products(row), quantity }
+        })
+
+        const dbClient = await getClient()
+        let reponse
+        try{
+            await dbClient("BEGIN")
+
+            const orderCreationResult = await dbClient.query(
+                `INSER INTO orders (customer_id, total) VALUES ($1, $2) RETURNING *;`,
+                [customerId, orderTotal]
+            )
+
+            const order = new Orders(orderCreationResult.rows[0], null, populatedOrderProducts)
+
+            for (const entry of populatedOrderProducts)
+            {
+                await dbClient.query(
+                    `INSERT INTO order_products (order_id, product_id, quantity) VALUES (1$, $2, $3);`,
+                    [order.id, entry.product.id, entry.quantity]
+                )
+            }
+
+            await dbClient("COMMIT")
+            response = order
+        } catch (error) {
+            await dbClient("ROLLBACK")
+            response = { message: `Error while creating order: ${error.message}` }
+
+        }finally{
+            dbClient.release()
+        }
+    }
+}
+
+module.exports = Orders
