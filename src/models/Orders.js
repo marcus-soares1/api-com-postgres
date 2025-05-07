@@ -89,6 +89,8 @@ class Orders{
         }finally{
             dbClient.release()
         }
+
+        return response
     }
 }
 
