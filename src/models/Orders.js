@@ -1,4 +1,5 @@
 const { getClient, query } = require("../database")
+const Customers = require("./Customers")
 const Products = require("./Products")
 
 class Orders{
@@ -36,7 +37,15 @@ class Orders{
             customers.updated_at AS "customer.updated_at"
         FROM orders JOIN customers ON customers.id = orders.customer_id;`
         )
-        return result.rows.map((row) => new Orders(row))
+        return result.rows.map((row) => new Orders(row,
+            {
+                id: row["customer.id"],
+                name: row["customer.name"],
+                email: row["customer.email"],
+                createdAt: row["customer.created_at"],
+                updatedAt: row["customer.updated_at"]
+            }
+        ))
     }
 
     /**
@@ -92,6 +101,52 @@ class Orders{
 
         return response
     }
+
+    static async findById(id)
+    {
+        const orderResult = await query(`
+            SELECT
+                orders.*,
+                customers.id AS "customer.id",
+                customers.name AS "customer.name",
+                customers.email AS "customer.email",
+                customers.created_at AS "customer.created_at",
+                customers.updated_at AS "customer.updated_at"
+            FROM orders JOIN customers ON customers.id = orders.customer_id
+            WHERE orders.id = $1;`,
+            [id]
+        )
+        const orderProductsResult = await query(
+            `SELECT
+                order_products.*,
+                products.*
+            FROM order_products JOIN products ON order_products.product_id = products.id
+            WHERE order_products.order_id = $1;`,
+            [id]
+        )
+
+        const orderData = orderResult.rows[0]
+        const customer = new Customers({
+            id: orderData["customer.id"],
+            name: orderData["customer.name"],
+            email: orderData["customer.email"],
+            createdAt: orderData["customer.created_at"],
+            updatedAt: orderData["customer.updated_at"]
+        })
+
+        return new Orders(orderData, customer, orderProductsResult.rows)
+
+    }
+
+    static async delete(id)
+    {
+        const deletedOrder = await query(`
+            DELETE FROM orders WHERE id = $1 RETURNING *; 
+        `, [id])
+        
+        return { message: `Order deleted successfully` }
+    }
+
 }
 
 module.exports = Orders
