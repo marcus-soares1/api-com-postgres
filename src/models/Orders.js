@@ -8,7 +8,7 @@ class Orders{
         this.customerId = orderRow.customer_id
         this.total = +orderRow.total
         this.createdAt = new Date(orderRow.created_at)
-        this.updaetAt = new Date(orderRow.updaet_at)
+        this.updatedAt = new Date(orderRow.updated_at)
 
         this.customer = undefined
         if(populateCustomer)
@@ -16,10 +16,10 @@ class Orders{
             this.customer = populateCustomer
         }
 
-        this.product = undefined
+        this.products = undefined
         if(populateProducts)
         {
-            this.product = populateProducts
+            this.products = populateProducts
         }
 
     }
@@ -42,14 +42,14 @@ class Orders{
     /**
     * 
     * @param {number} customerId
-    * @param {{id: nunmber, quantity: number}[]} orderProducts    
+    * @param {{id: number, quantity: number}[]} orderProducts    
     */
 
     static async create(customerId, orderProducts)
     {
        
         const storedOrderProducts = await query(
-            `SELECT * FROM orders WHERE id = ANY($1::int[]);`,
+            `SELECT * FROM products WHERE id = ANY($1::int[]);`,
             [orderProducts.map(product => product.id)]
         )
 
@@ -61,12 +61,12 @@ class Orders{
         })
 
         const dbClient = await getClient()
-        let reponse
+        let response
         try{
-            await dbClient("BEGIN")
+            await dbClient.query("BEGIN")
 
             const orderCreationResult = await dbClient.query(
-                `INSER INTO orders (customer_id, total) VALUES ($1, $2) RETURNING *;`,
+                `INSERT INTO orders (customer_id, total) VALUES ($1, $2) RETURNING *;`,
                 [customerId, orderTotal]
             )
 
@@ -75,15 +75,15 @@ class Orders{
             for (const entry of populatedOrderProducts)
             {
                 await dbClient.query(
-                    `INSERT INTO order_products (order_id, product_id, quantity) VALUES (1$, $2, $3);`,
+                    `INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3);`,
                     [order.id, entry.product.id, entry.quantity]
                 )
             }
 
-            await dbClient("COMMIT")
+            await dbClient.query("COMMIT")
             response = order
         } catch (error) {
-            await dbClient("ROLLBACK")
+            await dbClient.query("ROLLBACK")
             response = { message: `Error while creating order: ${error.message}` }
 
         }finally{
