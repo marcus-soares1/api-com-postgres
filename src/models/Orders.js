@@ -1,4 +1,4 @@
-const { getClient } = require("../database")
+const { getClient, query } = require("../database")
 const Products = require("./Products")
 
 class Orders{
