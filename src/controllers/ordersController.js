@@ -8,12 +8,6 @@ const orderController = {
         res.json(orders)
     },
 
-    // GET /api/orders/:id
-    show: async (req, res) => {
-        const order = await Orders
-
-    },
-
     // POST /api/orders
     create: async (req, res) => {
         const { customerId, products } = req.body
