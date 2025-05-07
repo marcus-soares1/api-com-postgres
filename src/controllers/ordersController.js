@@ -19,7 +19,30 @@ const orderController = {
         }
 
         return res.status(201).json(order)
-    }
+    },
+
+    // GET /api/orders/:id
+    show: async (req, res) => {
+        const { id } = req.params
+
+        const order = await Orders.findById(+id)
+
+        if(!order) return res.status(404).json(order)
+
+        return res.json(order)
+    },
+
+    // DELETE /api/order/:id
+    delete: async (req, res) => {
+        const { id } = req.params
+
+        const message = await Orders.delete(+id)
+
+        if(!message) return res.status(404).json(message)
+
+        return res.json(message)
+    },
+
 }
 
 module.exports = orderController
