@@ -6,6 +6,8 @@ class Customers{
         this.id = customerRow.id
         this.name = customerRow.name
         this.email = customerRow.email
+        this.updatedAt = customerRow.updated_at
+        this.createdAt = customerRow.created_at
     }
 
     static async findAll()
@@ -42,7 +44,8 @@ class Customers{
         
         const result = await query(`UPDATE customers SET
                 name = $1,
-                email = $2
+                email = $2,
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = $3
             RETURNING *`, [customer.name, customer.email, id])
 
