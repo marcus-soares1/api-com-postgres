@@ -18,7 +18,9 @@ async function syncDatabase(){
       CREATE TABLE IF NOT EXISTS customers (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL
+        email VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEAFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEAFAULT CURRENT_TIMESTAMP
       );
     `)
     console.log('Created "customers" table.');
@@ -28,7 +30,7 @@ async function syncDatabase(){
         id SERIAL PRIMARY KEY,
         customer_id INT REFERENCES customers (id),
         total DECIMAL(10, 2) NOT NULL DEFAULT (0),
-        current_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)

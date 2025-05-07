@@ -27,15 +27,15 @@ class Orders{
     static async findAll()
     {
         const result = await query(`
-            SELECT 
-                orders.*, 
-                customers.id AS customer_id,
-                customers.name AS customer.name,
-                customers.email AS customer.email,
-                customers.created_at AS customer.created_at,
-                customers.updated_at AS customer.updated_at,            
-            FROM orders JOIN customers ON customer_id = orders.customer_id
-        `)
+        SELECT
+            orders.*,
+            customers.id AS "customer.id",
+            customers.name AS "customer.name",
+            customers.email AS "customer.email",
+            customers.created_at AS "customer.created_at",
+            customers.updated_at AS "customer.updated_at"
+        FROM orders JOIN customers ON customers.id = orders.customer_id;`
+        )
         return result.rows.map((row) => new Orders(row))
     }
 
